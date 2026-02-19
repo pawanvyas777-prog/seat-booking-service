@@ -1,0 +1,35 @@
+
+services:
+  # Primary Database
+  postgres:
+    image: postgres:16
+    container_name: seat-booking-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: seatbooking
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Fast Seat Locking (Cache)
+  redis:
+    image: redis:7-alpine
+    container_name: seat-booking-cache
+    ports:
+      - "6379:6379"
+
+  # Messaging Queue (Notifications)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: seat-booking-mq
+    ports:
+      - "5672:5672"   # App communication
+      - "15672:15672" # Dashboard UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+volumes:
+  postgres_data:
